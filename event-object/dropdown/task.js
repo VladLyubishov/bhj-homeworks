@@ -4,11 +4,8 @@ let dropdownItem = document.querySelectorAll('.dropdown__item');
 
 dropdownMenu.addEventListener('click', function(){
 
-    if (dropdownList.classList.contains('dropdown__list_active')){
-        dropdownList.classList.remove('dropdown__list_active');
-    } else {
-        dropdownList.classList.add('dropdown__list_active');
-    }
+    dropdownList.classList.toggle('dropdown__list_active');
+
 })
 
 dropdownItem.forEach((element) => {
