@@ -3,9 +3,7 @@ const reveal = document.querySelectorAll('.reveal')
 reveal.forEach(element => {
     setInterval(function(){
         if (isVisible(element)){
-    
             element.classList.add('reveal_active') 
-    
         } else {
             element.classList.remove('reveal_active') 
         }
