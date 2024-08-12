@@ -36,5 +36,4 @@ product.forEach(element => {
             );
         };
     })
-
 })
