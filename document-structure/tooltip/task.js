@@ -1,51 +1,48 @@
 const tooltip = document.querySelectorAll('.has-tooltip');
-let divTooltip;
+let lastTooltip = null; 
 
 tooltip.forEach(element => {
+    
+    let newTooltip = document.createElement('div');
+    newTooltip.classList.add('tooltip');
+    newTooltip.innerText = element.getAttribute('title'); 
+    element.insertAdjacentHTML('afterEnd', newTooltip.outerHTML);
+
     element.addEventListener('click', (event) => {
-        let newTooltip = document.createElement('div');
-        newTooltip.classList.add('tooltip');
-        newTooltip.innerText = element.getAttribute('title'); 
-        newTooltip.setAttribute('data-position', 'top');
-        let position = newTooltip.getAttribute('data-position');
         
+        event.preventDefault();
+        const tooltipDiv = element.nextElementSibling;
+
+        if (lastTooltip && lastTooltip !== tooltipDiv) {
+            lastTooltip.classList.remove('tooltip_active');
+        }
+
+        tooltipDiv.setAttribute('data-position', 'top');
+        let position = tooltipDiv.getAttribute('data-position');
         switch(position){
             case 'top':
-                newTooltip.style.top = `${(element.offsetTop - 10) - element.offsetHeight}px`;
-                newTooltip.style.left = `${element.offsetLeft}px`;
+                tooltipDiv.style.top = `${(element.offsetTop - 10) - element.offsetHeight}px`;
+                tooltipDiv.style.left = `${element.offsetLeft}px`;
                 break;
             case 'left':
-                newTooltip.style.top = `${(element.offsetTop - 5) - element.clientHeight}px`;
+                tooltipDiv.style.top = `${(element.offsetTop - 5) - element.clientHeight}px`;
                 let hideElem = document.createElement('p');
                 hideElem.innerText =  element.getAttribute('title');
                 hideElem.style.position = 'fixed';
                 document.body.appendChild(hideElem);
-                newTooltip.style.left = `${element.offsetLeft - hideElem.offsetWidth - 10}px`;
+                tooltipDiv.style.left = `${element.offsetLeft - hideElem.offsetWidth - 10}px`;
                 document.body.removeChild(hideElem);
                 break;
             case 'right':
-                newTooltip.style.top = `${(element.offsetTop - 5) - element.clientHeight}px`;
-                newTooltip.style.left = `${element.offsetLeft + element.offsetWidth}px`;
+                tooltipDiv.style.top = `${(element.offsetTop - 5) - element.clientHeight}px`;
+                tooltipDiv.style.left = `${element.offsetLeft + element.offsetWidth}px`;
                 break;
             case 'bottom':
-                newTooltip.style.top = `${element.offsetTop + element.offsetHeight}px`;
-                newTooltip.style.left = `${element.offsetLeft}px`;
+                tooltipDiv.style.top = `${element.offsetTop + element.offsetHeight}px`;
+                tooltipDiv.style.left = `${element.offsetLeft}px`;
                 break;
         }
-        element.insertAdjacentHTML('afterEnd', newTooltip.outerHTML);
-        if (divTooltip == null){
-            divTooltip = element.nextElementSibling;
-        }
-        let textLink = element.getAttribute('title');
-        if(textLink  == divTooltip.innerText){
-            event.preventDefault();
-            divTooltip.classList.toggle('tooltip_active')
-            divTooltip = element.nextElementSibling;
-        } else {
-            event.preventDefault();
-            divTooltip.classList.remove('tooltip_active')
-            element.nextElementSibling.classList.add('tooltip_active')
-            divTooltip = element.nextElementSibling;
-        }
+        tooltipDiv.classList.toggle('tooltip_active')
+        lastTooltip = tooltipDiv;
     })
 });
