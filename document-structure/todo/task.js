@@ -1,46 +1,51 @@
 const tasksList = document.querySelector('.tasks__list');
 const input = document.querySelector('.tasks__input');
 const form = document.querySelector('form');
-let storageCounter = 0;
+
+let tasks;
+let tasksFromStorage = localStorage.getItem('tasks');
+
+if (tasksFromStorage) {
+  try {
+    tasks = JSON.parse(tasksFromStorage); 
+  } catch (error) {
+    tasks = []; 
+  }
+} else {
+  tasks = []; 
+}
 
 window.addEventListener('DOMContentLoaded', () => {
-
-    for(let i = 0; i < localStorage.length; i++){
-        let key = localStorage.key(i);
-        tasksList.insertAdjacentHTML('afterBegin', localStorage.getItem(key))
-    }
+    renderTasks();
 })
 
 form.addEventListener('submit', (event) => {
     
-    event.preventDefault()
-
-    let task = document.createElement('div');
-    task.classList.add('task');
-    task.setAttribute('storageCounter', storageCounter)
-
-    let taskTitle = document.createElement('div');
-    taskTitle.innerText = input.value;
-    taskTitle.classList.add('task__title');
-
-    let taskRemove = document.createElement('a');
-    taskRemove.innerText = 'X';
-    taskRemove.classList.add('task__remove');
-
-    task.insertAdjacentHTML('afterBegin', taskTitle.outerHTML);
-    task.insertAdjacentHTML('beforeEnd', taskRemove.outerHTML);
-    tasksList.insertAdjacentHTML('afterBegin', task.outerHTML);
-
-    localStorage.setItem(`storage${storageCounter}`, task.outerHTML);
-    storageCounter++;
+    event.preventDefault();
+    const taskText = input.value.trim();
+    tasks.push(taskText);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
     form.reset();
+    renderTasks();
 
 })
 
 tasksList.addEventListener('click', (event) => {
-    if (event.target.classList.contains('task__remove')) {
-        event.preventDefault();
-        event.target.parentElement.remove();
-        localStorage.removeItem(`storage${event.target.parentElement.getAttribute('storageCounter')}`);
-    }
+    const taskIndex = Array.from(tasksList.children).indexOf(event.target.parentElement);
+    tasks.splice(taskIndex, 1);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderTasks();
 });
+
+function renderTasks() {
+    tasksList.innerHTML = '';
+    tasks.forEach((task, index) => {
+        tasksList.insertAdjacentHTML('afterBegin', `
+            <div class="task" data-index="${index}">
+            <div class="task__title">${task}</div>
+            <a href="#" class="task__remove">&times;</a>
+            </div>
+        `);
+    });
+}
+ 

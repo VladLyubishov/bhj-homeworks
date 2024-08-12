@@ -1,17 +1,14 @@
 const tooltip = document.querySelectorAll('.has-tooltip');
+let divTooltip;
 
 tooltip.forEach(element => {
     element.addEventListener('click', (event) => {
-        oldTooltip = document.querySelectorAll('.tooltip')
-        oldTooltip.forEach(oldTooltip => oldTooltip.remove())
-        event.preventDefault();
         let newTooltip = document.createElement('div');
         newTooltip.classList.add('tooltip');
         newTooltip.innerText = element.getAttribute('title'); 
-        newTooltip.setAttribute('data-position', 'left');
-        newTooltip.style.display = 'block';
-        position = newTooltip.getAttribute('data-position');
-
+        newTooltip.setAttribute('data-position', 'top');
+        let position = newTooltip.getAttribute('data-position');
+        
         switch(position){
             case 'top':
                 newTooltip.style.top = `${(element.offsetTop - 10) - element.offsetHeight}px`;
@@ -31,12 +28,24 @@ tooltip.forEach(element => {
                 newTooltip.style.left = `${element.offsetLeft + element.offsetWidth}px`;
                 break;
             case 'bottom':
-                newTooltip.style.top = `${(element.offsetTop) + element.offsetHeight}px`;
+                newTooltip.style.top = `${element.offsetTop + element.offsetHeight}px`;
                 newTooltip.style.left = `${element.offsetLeft}px`;
                 break;
         }
-
-
-        element.insertAdjacentHTML('beforeEnd', newTooltip.outerHTML);
-    });
+        element.insertAdjacentHTML('afterEnd', newTooltip.outerHTML);
+        if (divTooltip == null){
+            divTooltip = element.nextElementSibling;
+        }
+        let textLink = element.getAttribute('title');
+        if(textLink  == divTooltip.innerText){
+            event.preventDefault();
+            divTooltip.classList.toggle('tooltip_active')
+            divTooltip = element.nextElementSibling;
+        } else {
+            event.preventDefault();
+            divTooltip.classList.remove('tooltip_active')
+            element.nextElementSibling.classList.add('tooltip_active')
+            divTooltip = element.nextElementSibling;
+        }
+    })
 });
