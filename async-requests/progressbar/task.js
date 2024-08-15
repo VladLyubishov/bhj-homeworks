@@ -5,7 +5,8 @@ const formData = new FormData(form)
 
 form.addEventListener('submit', (event) => {
     event.preventDefault()
-    xhr.addEventListener('progress', (event) => {
+
+    xhr.upload.addEventListener('progress', (event) => {
         if (event.lengthComputable) {
             progress.value = event.loaded / event.total
         }
