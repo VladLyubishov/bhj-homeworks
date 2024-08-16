@@ -8,12 +8,16 @@ window.addEventListener('DOMContentLoaded', () => {
     if (valute.length != 0){
         showValute(valute);
     } else {
-        xhr.addEventListener('readystatechange', () => {
+        xhr.addEventListener('load', () => {
             if (xhr.readyState === xhr.DONE){
-                loader.classList.remove('loader_active');
-                const parsedJSON = JSON.parse(xhr.responseText).response.Valute;
-                showValute(parsedJSON);
-                saveValute(parsedJSON);
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    loader.classList.remove('loader_active');
+                    const parsedJSON = JSON.parse(xhr.responseText).response.Valute;
+                    showValute(parsedJSON);
+                    saveValute(parsedJSON);
+                } else {
+                    alert('Произошла ошибка при отправке запроса на сервер.'); 
+                }
             };
         })
         xhr.open('GET', url);
